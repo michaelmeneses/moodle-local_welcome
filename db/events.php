@@ -33,4 +33,8 @@ $observers = array(
         'eventname' => '\core\event\user_created',
         'callback' => '\local_welcome\observer::send_welcome',
     ),
+    array(
+        'eventname' => '\core\event\user_enrolment_created',
+        'callback' => '\local_welcome\observer::send_welcome_course',
+    ),
 );

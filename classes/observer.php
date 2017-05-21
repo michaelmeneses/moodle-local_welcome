@@ -88,4 +88,52 @@ class observer {
         }
     }
 
+    public static function send_welcome_course(\core\event\user_enrolment_created $event) {
+        global $CFG, $SITE;
+
+        $eventdata = $event->get_data();
+
+        $user = \core_user::get_user($event->relateduserid);
+        $course = get_course($event->courseid);
+
+        $sender = get_admin();
+
+        if (!empty($user->email) && $course->visible) {
+
+            $config = get_config('local_welcome');
+
+            $moderator = clone($sender);
+
+            $moderator->email = $config->moderator_email;
+
+            $sender->email = $config->sender_email;
+            $sender->firstname = $config->sender_firstname;
+            $sender->lastname = $config->sender_lastname;
+
+            $messageuserenabled = $config->message_enrolment_user_enabled;
+            $messageuser = $config->message_enrolment_user;
+            $messageusersubject = $config->message_enrolment_user_subject;
+
+            $messagemoderatorenabled = $config->message_enrolment_moderator_enabled;
+            $messagemoderator = $config->message_enrolment_moderator;
+            $messagemoderatorsubject = $config->message_enrolment_moderator_subject;
+
+            $welcome = new \local_welcome\message($course->id);
+
+            $messageuser = $welcome->replace_values($user, $messageuser);
+            $messageusersubject = $welcome->replace_values($user, $messageusersubject);
+            $messagemoderator = $welcome->replace_values($user, $messagemoderator);
+            $messagemoderatorsubject = $welcome->replace_values($user, $messagemoderatorsubject);
+
+            if (!empty($messageuser) && !empty($sender->email) && $messageuserenabled) {
+                email_to_user($user, $sender, $messageusersubject, html_to_text($messageuser), $messageuser);
+            }
+
+            if (!empty($messagemoderator) && !empty($sender->email) && $messagemoderatorenabled) {
+                email_to_user($moderator, $sender, $messagemoderatorsubject,
+                    html_to_text($messagemoderator), $messagemoderator);
+            }
+        }
+    }
+
 }

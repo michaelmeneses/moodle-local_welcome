@@ -36,11 +36,13 @@ class message {
     public $welcomevalues;
     public $customfields;
 
-    public function __construct() {
+    public function __construct($courseid = null) {
         $this->defaultfields = $this->get_default_fields();
         $this->welcomefields = $this->get_welcome_fields();
         $this->welcomevalues = $this->get_welcome_values();
         $this->customfields = $this->get_custom_fields();
+        $this->coursefields = $this->get_course_fields();
+        $this->coursevalues = $this->get_course_values($courseid);
     }
 
 
@@ -58,6 +60,12 @@ class message {
         $welcomefields = array('sitelink', 'sitename', 'resetpasswordlink');
 
         return $welcomefields;
+    }
+
+    private function get_course_fields() {
+        $coursefields = array('courselink', 'coursename');
+
+        return $coursefields;
     }
 
     private function get_custom_fields() {
@@ -115,6 +123,27 @@ class message {
         return $values;
     }
 
+    public function get_course_values($courseid = 3) {
+
+        if (is_null($courseid)) {
+            $array = array();
+            foreach ($this->coursefields as $field) {
+                $array[$field] = 'REQUIRE COURSE';
+            }
+            return $array;
+        }
+
+        $course = get_course($courseid);
+
+        $values = array();
+        $courselink = \html_writer::link(new \moodle_url('/course/view.php', ['id' => $course->id]), $course->fullname);
+        $coursename = $course->fullname;
+        foreach ($this->coursefields as $field) {
+            $values[$field] = $$field;
+        }
+        return $values;
+    }
+
     public function replace_values($user, $message) {
         $cususervars = $this->get_user_custom_values($user);
         $defuservars = $this->get_user_default_values($user);
@@ -129,6 +158,10 @@ class message {
 
         foreach ($this->welcomefields as $field) {
             $message = str_replace('[['.$field.']]', $this->welcomevalues[$field], $message);
+        }
+
+        foreach ($this->coursefields as $field) {
+            $message = str_replace('[['.$field.']]', $this->coursevalues[$field], $message);
         }
         return $message;
 

@@ -112,5 +112,47 @@ if ($hassiteconfig) {
     $description = get_string('sender_lastname_desc', 'local_welcome');
     $setting = new admin_setting_configtext($name, $title, $description, $moderator->lastname);
     $settings->add($setting);
+
+    $settings->add(new admin_setting_heading('local_welcome/message_enrolment', 'Mensagem de Inscrição', 'Envia mensagem ao inscrever o usuário em um curso.'));
+
+    $name = 'local_welcome/message_enrolment_user_enabled';
+    $title = get_string('message_user_enabled', 'local_welcome');
+    $description = get_string('message_user_enabled_desc', 'local_welcome', $availablefields->out());
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 1);
+    $settings->add($setting);
+
+    $name = 'local_welcome/message_enrolment_user_subject';
+    $default = get_string('default_user_email_subject', 'local_welcome', $site->fullname);
+    $title = get_string('message_user_subject', 'local_welcome');
+    $description = get_string('message_user_subject_desc', 'local_welcome');
+    $setting = new admin_setting_configtext($name, $title, $description, $default);
+    $settings->add($setting);
+
+    $default = get_string('default_user_email', 'local_welcome', $site->fullname);
+    $name = 'local_welcome/message_enrolment_user';
+    $title = get_string('message_user', 'local_welcome');
+    $description = get_string('message_user_desc', 'local_welcome');
+    $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+    $settings->add($setting);
+
+    $name = 'local_welcome/message_enrolment_moderator_enabled';
+    $title = get_string('message_moderator_enabled', 'local_welcome');
+    $description = get_string('message_moderator_enabled_desc', 'local_welcome');
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 1);
+    $settings->add($setting);
+
+    $default = get_string('default_moderator_email_subject', 'local_welcome', $site->fullname);
+    $name = 'local_welcome/message_enrolment_moderator_subject';
+    $title = get_string('message_moderator_subject', 'local_welcome');
+    $description = get_string('message_moderator_subject_desc', 'local_welcome');
+    $setting = new admin_setting_configtext($name, $title, $description, $default);
+    $settings->add($setting);
+
+    $default = get_string('default_moderator_email', 'local_welcome', $site->fullname);
+    $name = 'local_welcome/message_enrolment_moderator';
+    $title = get_string('message_moderator', 'local_welcome');
+    $description = get_string('message_moderator_desc', 'local_welcome');
+    $setting = new admin_setting_confightmleditor($name, $title, $description, $default);
+    $settings->add($setting);
 }
 
